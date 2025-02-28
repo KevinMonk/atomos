@@ -1,11 +1,23 @@
+# typed: strict
 # frozen_string_literal: true
 
+require 'sorbet-runtime'
 require 'atomos/version'
 
 module Atomos
+  extend T::Sig
+
   module_function
 
   # rubocop:disable Metrics/MethodLength
+  sig do
+    params(
+      dest: String,
+      contents: T.nilable(String),
+      tmpdir: T.nilable(String),
+      block: T.nilable(T.proc.params(arg0: Tempfile).returns(T.untyped))
+    ).returns(T.untyped)
+  end
   def atomic_write(dest, contents = nil, tmpdir: nil, &block)
     unless contents.nil? ^ block.nil?
       raise ArgumentError, 'must provide either contents or a block'
@@ -30,6 +42,12 @@ module Atomos
   end
   # rubocop:enable Metrics/MethodLength
 
+  sig do
+    params(
+      dest: String,
+      tmpdir: T.nilable(String)
+    ).returns(String)
+  end
   def self.default_tmpdir_for_file(dest, tmpdir)
     tmpdir ||= begin
       require 'tmpdir'

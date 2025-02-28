@@ -9,3 +9,8 @@
 
 # rspec failure tracking
 .rspec_status
+
+# Sorbet
+/sorbet/rbi/hidden-definitions/
+/sorbet/rbi/todo.rbi
+.sorbet/

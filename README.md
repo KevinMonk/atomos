@@ -24,6 +24,36 @@ Or install it yourself as:
 
 TODO: Write usage instructions here
 
+## Type Checking
+
+This project uses [Sorbet](https://sorbet.org/) for static type checking. The codebase has type signatures that help catch type-related bugs and improve documentation.
+
+### Type Checking During Development
+
+To run the type checker:
+
+```bash
+bundle exec rake typecheck
+```
+
+### Working with Sorbet
+
+If you're making changes to the codebase:
+
+1. Generate updated RBI files:
+```bash
+bundle exec rake sorbet:generate_gem_rbis
+bundle exec rake sorbet:generate_project_rbis
+```
+
+2. Add type signatures to your methods:
+```ruby
+sig { params(name: String).returns(String) }
+def hello(name)
+  "Hello, #{name}!"
+end
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -40,4 +70,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Atomos project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/atomos/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the Atomos project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/atomos/blob/master/CODE_OF_CONDUCT.md).

@@ -1,0 +1,11 @@
+--ignore=vendor/
+--ignore=bin/
+--ignore=.bundle/
+--ignore=spec/
+--dir=.
+
+# Enable experimental features
+--enable-experimental-requires-ancestor
+
+# Report errors for all files, not just ones with sigil
+--require-sigil=false

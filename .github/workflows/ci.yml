@@ -49,11 +49,37 @@ jobs:
           ruby-version: ${{ needs.ruby-versions.outputs.latest }}
           bundler-cache: true
 
-      - name: Run tests
+      - name: Run rubocop
         run: bundle exec rake rubocop
 
+  typecheck:
+    needs:
+      - ruby-versions
+    name: Typecheck
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ needs.ruby-versions.outputs.latest }}
+          bundler-cache: true
+
+      - name: Setup Sorbet RBI files
+        run: |
+          bundle exec tapioca init
+          bundle exec tapioca gems
+          bundle exec tapioca dsl
+          bundle exec srb rbi hidden-definitions
+          bundle exec srb rbi todo
+
+      - name: Run Sorbet type checker
+        run: bundle exec rake typecheck
+
   all-tests:
-    needs: [test, lint]
+    needs: [test, lint, typecheck]
     runs-on: ubuntu-latest
     if: always()
     steps:
