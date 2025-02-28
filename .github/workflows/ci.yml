@@ -5,6 +5,9 @@ on:
     branches:
       - master
   pull_request:
+  schedule:
+    # Run weekly on Monday to catch new Ruby releases
+    - cron: '0 0 * * 1'
 
 jobs:
   test:
@@ -12,16 +15,18 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false  # Don't fail all jobs if one fails
       matrix:
         ruby:
-          - 2.5
-          - 2.6
-          - 2.7
-          - 3.0
-          - 3.1
-          - 3.2
-          - 3.3
-          - 3.4
+          - '2.5'
+          - '2.6'
+          - '2.7'
+          - '3.0'
+          - '3.1'
+          - '3.2'
+          - '3.3'
+          - '3.4'
+          - 'head'  # Test against Ruby-head
 
     steps:
       - uses: actions/checkout@v3
@@ -31,6 +36,8 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+        continue-on-error: ${{ matrix.ruby == 'head' }}  # Allow ruby-head to fail
 
       - name: Run tests
         run: bundle exec rake
+        continue-on-error: ${{ matrix.ruby == 'head' }}  # Allow ruby-head to fail

@@ -1,0 +1,41 @@
+name: Update Ruby Versions
+
+on:
+  schedule:
+    # Run monthly to check for new Ruby versions
+    - cron: '0 0 1 * *'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history for proper git operations
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Run Ruby version updater
+        run: bin/update_ruby_versions.rb
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        if: steps.git-check.outputs.changes == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: 'ci: update supported Ruby versions'
+          branch: update-ruby-versions
+          delete-branch: true
+          title: 'Update supported Ruby versions'
+          body: |
+            This PR updates the CI configuration to test against the latest Ruby versions.
+
+            *This is an automated PR created by the GitHub Actions workflow.*
